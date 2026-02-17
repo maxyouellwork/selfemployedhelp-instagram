@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram Carousel Posts - SelfEmployedHelp.co.uk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       CSS VARIABLES
+       ======================================== */
+    :root {
+      --navy: #0F2340;
+      --navy-light: #1a3460;
+      --navy-dark: #0a1a30;
+      --coral: #f07a5c;
+      --coral-light: #f4957d;
+      --coral-dark: #d96647;
+      --teal: #4a9aa0;
+      --teal-light: #5fb5bb;
+      --dark-teal: #127d86;
+      --cream: #f9f4ee;
+      --cream-dark: #f0ebe3;
+      --white: #ffffff;
+      --light-gray: #e5e7eb;
+      --page-bg: #f0ede8;
+      --slide-size: 380px;
+    }
+
+    /* ========================================
+       RESET & BASE
+       ======================================== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--page-bg);
+      color: var(--navy);
+      min-height: 100vh;
+    }
+
+    /* ========================================
+       PAGE HEADER
+       ======================================== */
+    .page-header {
+      background: var(--white);
+      border-bottom: 1px solid var(--light-gray);
+      padding: 48px 24px 40px;
+    }
+
+    .header-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .header-inner h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .header-inner p {
+      font-size: 0.95rem;
+      color: #777;
+      line-height: 1.5;
+    }
+
+    .header-inner .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    .header-inner .back-link:hover { text-decoration: underline; }
+
+    /* ========================================
+       POST CARDS
+       ======================================== */
+    .posts-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .post-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(15, 35, 64, 0.08);
+    }
+
+    .post-card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--light-gray);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .post-number {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .post-purpose {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #888;
+    }
+
+    .pinned-tag {
+      background: var(--coral);
+      color: var(--white);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ========================================
+       CAROUSEL
+       ======================================== */
+    .carousel-wrapper {
+      position: relative;
+      background: #1a1a1a;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    .carousel-viewport {
+      overflow: hidden;
+    }
+
+    /* Slide base */
+    .slide {
+      width: var(--slide-size);
+      height: var(--slide-size);
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Make carousel responsive */
+    .carousel-viewport,
+    .carousel-track,
+    .slide {
+      width: 100%;
+    }
+
+    .slide { aspect-ratio: 1; height: auto; }
+
+    /* Navigation arrows — inside the viewport */
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.15s, opacity 0.2s;
+      opacity: 0.85;
+    }
+
+    .carousel-nav:hover { transform: translateY(-50%) scale(1.08); background: #fff; opacity: 1; }
+    .carousel-nav:active { transform: translateY(-50%) scale(0.95); }
+    .carousel-nav:disabled { opacity: 0 !important; pointer-events: none; }
+    .carousel-nav.prev { left: 14px; }
+    .carousel-nav.next { right: 14px; }
+
+    .carousel-nav svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--navy);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    /* Dots */
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 0;
+      background: var(--white);
+    }
+
+    .carousel-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      border: none;
+      cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+      padding: 0;
+    }
+
+    .carousel-dot:hover { background: var(--coral-light); }
+
+    .carousel-dot.active {
+      background: var(--coral);
+      transform: scale(1.3);
+    }
+
+    .slide-counter {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      font-size: clamp(13px, 2vw, 16px);
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 16px;
+      z-index: 10;
+      letter-spacing: 0.5px;
+    }
+
+    /* ========================================
+       CAPTION AREA
+       ======================================== */
+    .caption-area {
+      padding: 20px 24px 24px;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .caption-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+
+    .caption-text {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--navy);
+      white-space: pre-line;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: var(--cream);
+      border-radius: 10px;
+      border: 1px solid var(--cream-dark);
+      max-height: 220px;
+      overflow-y: auto;
+    }
+
+    .copy-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .copy-btn:hover { background: var(--navy-light); transform: translateY(-1px); }
+    .copy-btn.copied { background: #22c55e; }
+    .copy-btn svg { width: 14px; height: 14px; }
+
+    /* ========================================
+       SLIDE DESIGNS — SHARED
+       ======================================== */
+    .watermark {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(10px, 1.6vw, 14px);
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .wm-light { color: rgba(249, 244, 238, 0.3); }
+    .wm-dark { color: rgba(15, 35, 64, 0.18); }
+
+    .swipe-hint {
+      position: absolute;
+      bottom: 22px;
+      right: 24px;
+      font-size: clamp(14px, 2.2vw, 18px);
+      font-weight: 600;
+      color: var(--coral-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .swipe-hint .arr { font-size: clamp(18px, 3vw, 24px); }
+
+    /* Mini logo */
+    .mini-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mini-logo img { width: clamp(36px, 5.5vw, 48px); height: clamp(36px, 5.5vw, 48px); object-fit: contain; }
+
+    /* ========================================
+       SLIDE TYPE: NAVY
+       ======================================== */
+    .s-navy {
+      background: var(--navy);
+      background-image:
+        radial-gradient(ellipse at 20% 80%, rgba(74, 154, 160, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(240, 122, 92, 0.06) 0%, transparent 50%);
+      color: var(--white);
+      justify-content: center;
+      align-items: center;
+      padding: 36px 28px;
+      text-align: center;
+    }
+
+    .s-navy.has-texture {
+      background-image:
+        radial-gradient(ellipse at 20% 80%, rgba(74, 154, 160, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(240, 122, 92, 0.06) 0%, transparent 50%),
+        url('instagram-images/bg-navy-texture-1.webp');
+      background-size: cover, cover, cover;
+      background-position: center;
+      background-blend-mode: normal, normal, soft-light;
+    }
+
+    .s-navy.texture-2 {
+      background-image:
+        radial-gradient(ellipse at 30% 70%, rgba(240, 122, 92, 0.08) 0%, transparent 50%),
+        url('instagram-images/bg-navy-texture-2.webp');
+      background-size: cover, cover;
+      background-position: center;
+      background-blend-mode: normal, soft-light;
+    }
+
+    .s-navy.texture-3 {
+      background-image:
+        radial-gradient(ellipse at 0% 100%, rgba(74, 154, 160, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(240, 122, 92, 0.06) 0%, transparent 50%),
+        url('instagram-images/bg-navy-texture-3.webp');
+      background-size: cover, cover, cover;
+      background-position: center;
+      background-blend-mode: normal, normal, soft-light;
+    }
+
+    .s-navy.texture-4 {
+      background-image:
+        radial-gradient(ellipse at 70% 10%, rgba(74, 154, 160, 0.1) 0%, transparent 50%),
+        url('instagram-images/bg-navy-texture-4.webp');
+      background-size: cover, cover;
+      background-position: center;
+      background-blend-mode: normal, soft-light;
+    }
+
+    /* ========================================
+       SLIDE TYPE: CREAM
+       ======================================== */
+    .s-cream {
+      background: var(--cream);
+      color: var(--navy);
+      justify-content: center;
+      padding: 36px 28px;
+    }
+
+    /* ========================================
+       SLIDE TYPE: CORAL (CTA)
+       ======================================== */
+    .s-coral {
+      background: var(--coral);
+      background-image:
+        radial-gradient(ellipse at 30% 30%, rgba(244, 149, 125, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(217, 102, 71, 0.3) 0%, transparent 50%);
+      color: var(--navy);
+      justify-content: center;
+      align-items: center;
+      padding: 36px 28px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .s-coral::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: -60px;
+      width: 200px;
+      height: 200px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+
+    .s-coral::after {
+      content: '';
+      position: absolute;
+      bottom: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      border: 2px solid rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+
+    /* ========================================
+       SLIDE TYPE: TEAL
+       ======================================== */
+    .s-teal {
+      background: linear-gradient(145deg, var(--teal) 0%, var(--dark-teal) 100%);
+      color: var(--white);
+      justify-content: center;
+      align-items: center;
+      padding: 36px 28px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .s-teal::before {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 240px;
+      height: 240px;
+      border: 2px solid rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+
+    .s-teal::after {
+      content: '';
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 200px;
+      height: 200px;
+      border: 2px solid rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+
+    /* ========================================
+       REUSABLE SLIDE ELEMENTS
+       ======================================== */
+    .sl-kicker {
+      font-size: clamp(14px, 2.2vw, 19px);
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 20px;
+    }
+
+    .sl-big-number {
+      font-size: clamp(100px, 22vw, 180px);
+      font-weight: 700;
+      color: var(--coral);
+      line-height: 0.85;
+      margin-bottom: 16px;
+    }
+
+    .sl-stat-body {
+      font-size: clamp(18px, 2.8vw, 24px);
+      font-weight: 400;
+      color: rgba(249, 244, 238, 0.75);
+      line-height: 1.4;
+      max-width: 480px;
+    }
+
+    .sl-title {
+      font-weight: 700;
+      line-height: 1.2;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sl-title.sz-xl { font-size: clamp(32px, 5.5vw, 48px); margin-bottom: 16px; }
+    .sl-title.sz-lg { font-size: clamp(28px, 4.5vw, 40px); margin-bottom: 14px; }
+    .sl-title.sz-md { font-size: clamp(24px, 4vw, 34px); margin-bottom: 12px; }
+
+    .sl-subtitle {
+      font-size: clamp(16px, 2.5vw, 20px);
+      font-weight: 400;
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sl-subtitle.muted { opacity: 0.6; }
+
+    .sl-accent { color: var(--coral); }
+    .sl-accent-teal { color: var(--teal-light); }
+
+    .sl-underline {
+      background-image: linear-gradient(transparent 60%, rgba(240, 122, 92, 0.35) 60%);
+      padding-bottom: 2px;
+    }
+
+    /* Accent bar */
+    .accent-bar {
+      width: clamp(56px, 8vw, 80px);
+      height: 5px;
+      background: var(--coral);
+      border-radius: 3px;
+      margin-bottom: 28px;
+    }
+
+    /* Gradient top bar */
+    .gradient-top-bar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--coral), var(--teal));
+      z-index: 2;
+    }
+
+    /* Logo block */
+    .sl-logo-block {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: clamp(12px, 2vw, 18px) clamp(20px, 3.5vw, 32px);
+      border: 2px solid rgba(249, 244, 238, 0.15);
+      border-radius: 10px;
+      margin-top: 28px;
+    }
+
+    .sl-logo-block img { width: clamp(40px, 6vw, 56px); height: clamp(40px, 6vw, 56px); }
+
+    .sl-logo-block span {
+      font-size: clamp(12px, 1.8vw, 16px);
+      font-weight: 600;
+      color: var(--cream);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Badge */
+    .sl-badge {
+      display: inline-block;
+      padding: clamp(8px, 1.5vw, 12px) clamp(20px, 3vw, 28px);
+      background: var(--navy);
+      color: var(--white);
+      font-size: clamp(13px, 2vw, 17px);
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border-radius: 6px;
+      margin-bottom: 18px;
+    }
+
+    .sl-badge.badge-teal { background: var(--teal); }
+    .sl-badge.badge-coral { background: var(--coral); color: var(--navy); }
+
+    /* Steps / list items */
+    .sl-steps {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(12px, 2vw, 18px);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .sl-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+    }
+
+    .sl-step-num {
+      width: clamp(42px, 6.5vw, 52px);
+      height: clamp(42px, 6.5vw, 52px);
+      background: var(--coral);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(18px, 2.5vw, 22px);
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .sl-step-text {
+      font-size: clamp(17px, 2.6vw, 22px);
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    /* Numbered items on navy */
+    .sl-numbered-items {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.8vw, 16px);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .sl-numbered-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 14px;
+      background: rgba(249, 244, 238, 0.05);
+      border-radius: 8px;
+      border-left: 4px solid var(--coral);
+      text-align: left;
+    }
+
+    .sl-ni-num {
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 700;
+      color: var(--coral);
+      flex-shrink: 0;
+      width: 32px;
+    }
+
+    .sl-ni-text {
+      font-size: clamp(16px, 2.5vw, 21px);
+      font-weight: 500;
+      color: var(--cream);
+      line-height: 1.35;
+    }
+
+    /* Checklist items */
+    .sl-checklist {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.5vw, 14px);
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .sl-cl-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 14px;
+      border-radius: 6px;
+      text-align: left;
+    }
+
+    .sl-cl-item.filled { background: rgba(249, 244, 238, 0.06); }
+    .sl-cl-item.on-cream { background: rgba(15, 35, 64, 0.04); }
+
+    .sl-cl-check {
+      width: clamp(22px, 3.5vw, 28px);
+      height: clamp(22px, 3.5vw, 28px);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sl-cl-check.checked { background: var(--coral); }
+    .sl-cl-check.checked-teal { background: var(--teal); }
+
+    .sl-cl-check.empty {
+      border: 2px solid rgba(249, 244, 238, 0.2);
+    }
+
+    .sl-cl-check.empty-dark {
+      border: 2px solid rgba(15, 35, 64, 0.15);
+    }
+
+    .sl-cl-check svg { width: clamp(14px, 2vw, 18px); height: clamp(14px, 2vw, 18px); }
+
+    .sl-cl-text {
+      font-size: clamp(16px, 2.4vw, 20px);
+      font-weight: 500;
+      line-height: 1.3;
+    }
+
+    /* CTA pill */
+    .sl-cta-pill {
+      display: inline-block;
+      padding: clamp(14px, 2vw, 18px) clamp(28px, 5vw, 40px);
+      background: var(--navy);
+      color: var(--white);
+      font-size: clamp(15px, 2.2vw, 19px);
+      font-weight: 600;
+      border-radius: 10px;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.3px;
+    }
+
+    .sl-cta-pill.pill-coral {
+      background: var(--coral);
+      color: var(--white);
+    }
+
+    /* Feature row */
+    .sl-features {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sl-feature {
+      font-size: clamp(14px, 2.2vw, 18px);
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    .sl-fdot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.4;
+    }
+
+    /* Horizontal logo on CTA slides */
+    .sl-hlogo {
+      position: relative;
+      z-index: 1;
+      width: clamp(220px, 40vw, 340px);
+      margin-bottom: 24px;
+    }
+
+    /* Big question mark decoration */
+    .qmark-deco::before {
+      content: '?';
+      position: absolute;
+      top: -30px;
+      right: -15px;
+      font-size: 260px;
+      font-weight: 700;
+      color: rgba(240, 122, 92, 0.04);
+      line-height: 1;
+    }
+
+    /* Single number card */
+    .sl-single-number {
+      font-size: clamp(80px, 16vw, 130px);
+      font-weight: 700;
+      color: var(--coral);
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .sl-single-number-text {
+      font-size: clamp(18px, 2.8vw, 24px);
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.35;
+      max-width: 400px;
+      margin-bottom: 16px;
+    }
+
+    .sl-body-text {
+      font-size: clamp(16px, 2.4vw, 20px);
+      font-weight: 400;
+      line-height: 1.55;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sl-body-text.on-navy { color: rgba(249, 244, 238, 0.7); }
+    .sl-body-text.on-teal { color: rgba(255,255,255,0.85); }
+    .sl-body-text.on-cream { color: #555; }
+
+    /* Divider line */
+    .sl-divider {
+      width: clamp(56px, 8vw, 80px);
+      height: 4px;
+      border-radius: 2px;
+      margin: 24px auto;
+    }
+    .sl-divider.div-coral { background: var(--coral); }
+    .sl-divider.div-teal { background: var(--teal); }
+
+    /* Large centered text */
+    .sl-large-text {
+      font-size: clamp(30px, 5vw, 42px);
+      font-weight: 600;
+      line-height: 1.25;
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+    }
+
+    /* Corner logo */
+    .corner-logo {
+      position: absolute;
+      top: 22px;
+      left: 24px;
+      z-index: 2;
+    }
+
+    .corner-logo img { width: clamp(36px, 5.5vw, 52px); height: clamp(36px, 5.5vw, 52px); }
+
+    /* ========================================
+       RESPONSIVE
+       ======================================== */
+    @media (max-width: 500px) {
+      .posts-container { padding: 24px 12px 60px; }
+      .post-card-header { padding: 16px 18px; }
+      .caption-area { padding: 16px 18px 20px; }
+      .sl-big-number { font-size: 80px; }
+      .sl-title.sz-xl { font-size: 22px; }
+      .sl-title.sz-lg { font-size: 20px; }
+      .sl-single-number { font-size: 60px; }
+    }
+
+    /* ========================================
+       PAGE FOOTER
+       ======================================== */
+    .page-footer {
+      text-align: center;
+      padding: 20px 24px 48px;
+    }
+
+    .page-footer p {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ======================================
+       PAGE HEADER
+       ====================================== -->
+  <div class="page-header">
+    <div class="header-inner">
+      <a href="instagram-templates.html" class="back-link">&larr; Back to Template Library</a>
+      <h1>Instagram Carousel Posts</h1>
+      <p>6 carousel posts ready to screenshot. Navigate through slides, then copy the caption below each post.</p>
+    </div>
+  </div>
+
+  <!-- ======================================
+       POSTS
+       ====================================== -->
+  <div class="posts-container">
+
+    <!-- ==========================================
+         POST 1: What is the Self-Employed Financial Checkup?
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">
+          Post 1
+          <span class="pinned-tag">Pin this</span>
+        </div>
+        <span class="post-purpose">Introduction &mdash; explain what this is</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">5</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover -->
+            <div class="slide s-navy has-texture">
+              <div class="accent-bar"></div>
+              <h3 class="sl-title sz-xl" style="color:#fff;">Free Self-Employed<br><span class="sl-accent">Financial Checkup</span></h3>
+              <p class="sl-subtitle muted" style="color:rgba(249,244,238,0.6); margin-bottom:28px; max-width:360px;">5 minutes. No documents.<br>See where you stand.</p>
+              <div class="sl-logo-block">
+                <img src="images/logo-icon.png" alt="SEH">
+                <span>SelfEmployedHelp.co.uk</span>
+              </div>
+              <div class="swipe-hint">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: What it covers -->
+            <div class="slide s-cream" style="align-items:center; text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-badge badge-teal" style="align-self:center;">What it checks</div>
+              <h3 class="sl-title sz-lg" style="margin-bottom:20px;">5 key areas of your finances</h3>
+              <div class="sl-steps" style="max-width:400px;">
+                <div class="sl-step">
+                  <div class="sl-step-num">1</div>
+                  <div class="sl-step-text" style="color:var(--navy);">Retirement planning</div>
+                </div>
+                <div class="sl-step">
+                  <div class="sl-step-num">2</div>
+                  <div class="sl-step-text" style="color:var(--navy);">Income protection</div>
+                </div>
+                <div class="sl-step">
+                  <div class="sl-step-num">3</div>
+                  <div class="sl-step-text" style="color:var(--navy);">Savings &amp; investments</div>
+                </div>
+                <div class="sl-step">
+                  <div class="sl-step-num">4</div>
+                  <div class="sl-step-text" style="color:var(--navy);">Family &amp; legacy protection</div>
+                </div>
+                <div class="sl-step">
+                  <div class="sl-step-num">5</div>
+                  <div class="sl-step-text" style="color:var(--navy);">Mortgage readiness</div>
+                </div>
+              </div>
+              <span class="watermark wm-dark">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: How it works -->
+            <div class="slide s-navy texture-3">
+              <div class="gradient-top-bar"></div>
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="width:100%;max-width:420px;margin:0 auto;text-align:left;">
+                <div class="sl-badge" style="margin-bottom:16px;">How it works</div>
+                <h3 class="sl-title sz-lg" style="color:#fff;margin-bottom:24px;">3 simple steps</h3>
+                <div class="sl-numbered-items">
+                  <div class="sl-numbered-item">
+                    <div class="sl-ni-num">1</div>
+                    <div class="sl-ni-text">Answer 22 honest questions</div>
+                  </div>
+                  <div class="sl-numbered-item">
+                    <div class="sl-ni-num">2</div>
+                    <div class="sl-ni-text">Get your personalised score</div>
+                  </div>
+                  <div class="sl-numbered-item">
+                    <div class="sl-ni-num">3</div>
+                    <div class="sl-ni-text">See where you stand</div>
+                  </div>
+                </div>
+                <div style="margin-top:20px;padding-top:14px;border-top:1px solid rgba(249,244,238,0.08);text-align:center;">
+                  <span style="font-size:clamp(11px,1.8vw,15px);font-weight:500;color:var(--teal-light);">No documents needed &middot; Takes 5 minutes</span>
+                </div>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: What you'll get -->
+            <div class="slide s-teal">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-badge badge-coral" style="align-self:center;">Your results</div>
+              <h3 class="sl-title sz-lg" style="color:#fff;margin-bottom:22px;">What you'll see</h3>
+              <div class="sl-checklist" style="margin-bottom:0;">
+                <div class="sl-cl-item filled">
+                  <div class="sl-cl-check checked">
+                    <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="sl-cl-text" style="color:var(--white);">A total score out of 100</div>
+                </div>
+                <div class="sl-cl-item filled">
+                  <div class="sl-cl-check checked">
+                    <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="sl-cl-text" style="color:var(--white);">Score bands: High, Medium, Low</div>
+                </div>
+                <div class="sl-cl-item filled">
+                  <div class="sl-cl-check checked">
+                    <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="sl-cl-text" style="color:var(--white);">Your weakest area highlighted</div>
+                </div>
+                <div class="sl-cl-item filled">
+                  <div class="sl-cl-check checked">
+                    <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </div>
+                  <div class="sl-cl-text" style="color:var(--white);">Personalised email report</div>
+                </div>
+              </div>
+              <p class="sl-body-text on-teal" style="margin-top:16px;">Instant results. No waiting. No phone calls.</p>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 5: CTA -->
+            <div class="slide s-coral">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo">
+              <h3 class="sl-title sz-xl" style="margin-bottom:16px;">Ready to check<br>your score?</h3>
+              <div class="sl-features">
+                <span class="sl-feature">Free</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">5 minutes</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">No documents</span>
+              </div>
+              <div class="sl-cta-pill">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark" style="color:rgba(15,35,64,0.2);">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">Introducing go.selfemployedhelp.co.uk
+
+A free, 5-minute financial check for self-employed people.
+
+It helps you see:
+→ what's covered
+→ what isn't
+→ and what you might want to look at next
+
+No judgement. No obligation. Just clarity.
+
+Link in bio to take the free check.
+
+#selfemployed #financialhealth #freelancer #soletrader #financialcheckup #selfemployeduk #pension #incomeprotection #smallbusinessuk</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         POST 2: 55% avoid dealing with their finances
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">Post 2</div>
+        <span class="post-purpose">Social proof / awareness</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">4</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover — Big stat on CREAM -->
+            <div class="slide s-cream" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-kicker" style="color:var(--teal);">Did you know?</div>
+              <div class="sl-big-number" style="color:var(--navy);">55%</div>
+              <p class="sl-stat-body" style="color:rgba(15,35,64,0.6);">of self-employed people avoid dealing with their finances</p>
+              <div class="swipe-hint" style="color:var(--coral);">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark wm-dark">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: Context on NAVY -->
+            <div class="slide s-navy has-texture" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-divider div-coral"></div>
+              <p class="sl-large-text" style="color:var(--white);">If that sounds familiar,<br>you're <span class="sl-accent">not alone.</span></p>
+              <div class="sl-divider div-coral"></div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: Solution on TEAL -->
+            <div class="slide s-teal">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <h3 class="sl-title sz-lg" style="color:#fff;margin-bottom:16px;">That's why we built<br>something simple.</h3>
+              <div class="sl-divider" style="background:rgba(255,255,255,0.3);margin:0 auto 16px;"></div>
+              <p class="sl-body-text on-teal" style="text-align:center;max-width:440px;">A free check that takes 5 minutes and shows you where you stand.</p>
+              <div style="margin-top:24px;">
+                <div class="sl-cta-pill pill-coral">Take the free check &rarr;</div>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: CTA on NAVY -->
+            <div class="slide s-navy texture-2" style="align-items:center;text-align:center;">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo" style="filter:brightness(0) invert(1);opacity:0.9;">
+              <h3 class="sl-title sz-xl" style="color:#fff;margin-bottom:16px;">Ready to check<br>your score?</h3>
+              <div class="sl-features" style="color:rgba(249,244,238,0.7);">
+                <span class="sl-feature">Free</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">5 minutes</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">No documents</span>
+              </div>
+              <div class="sl-cta-pill pill-coral">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">55% of self-employed people avoid dealing with their finances.
+
+If that sounds familiar, you're not alone.
+
+That's exactly why we built a free, simple check that takes 5 minutes.
+
+No phone calls. No pressure. Just clarity.
+
+Link in bio.
+
+#selfemployed #finances #soletrader #freelanceruk #financialhealth #selfemployeduk #moneymatters</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         POST 3: 22% are too afraid to ask
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">Post 3</div>
+        <span class="post-purpose">Reassurance / remove fear</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">4</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover — TEAL stat -->
+            <div class="slide s-teal">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-kicker" style="color:rgba(255,255,255,0.6);">The fear gap</div>
+              <div class="sl-big-number" style="color:var(--white);">22%</div>
+              <p class="sl-stat-body" style="color:rgba(255,255,255,0.7);">are too afraid to ask questions about their finances</p>
+              <div class="swipe-hint" style="color:rgba(255,255,255,0.6);">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: Reassurance — NAVY -->
+            <div class="slide s-navy has-texture" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <h3 class="sl-title sz-xl" style="color:#fff;margin-bottom:20px;">You don't need<br>to ask <span class="sl-accent">anyone.</span></h3>
+              <p class="sl-body-text on-navy" style="text-align:center;max-width:440px;">No phone calls. No meetings.<br>No awkward conversations.</p>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: How it works — CREAM -->
+            <div class="slide s-cream" style="text-align:left;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="width:100%;max-width:480px;margin:0 auto;">
+                <h3 class="sl-title sz-md" style="color:var(--navy);margin-bottom:22px;text-align:center;">Just three steps</h3>
+                <div class="sl-checklist">
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Answer a few questions privately</div>
+                  </div>
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Get clear, personalised results</div>
+                  </div>
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Decide what (if anything) to do next</div>
+                  </div>
+                </div>
+                <p style="margin-top:20px;text-align:center;font-size:clamp(12px,2vw,16px);font-weight:500;color:var(--teal);">No judgement. No pressure. Just clarity.</p>
+              </div>
+              <span class="watermark wm-dark">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: CTA — CORAL -->
+            <div class="slide s-coral">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo">
+              <h3 class="sl-title sz-xl" style="margin-bottom:16px;">Take the<br>free check</h3>
+              <div class="sl-features">
+                <span class="sl-feature">Free</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">5 minutes</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">No calls</span>
+              </div>
+              <div class="sl-cta-pill">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark" style="color:rgba(15,35,64,0.2);">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">22% of people are too afraid to ask questions about their finances.
+
+You don't need to ask anything here.
+Just answer a few questions and get clear results.
+
+No calls. No pressure. No judgement.
+
+Link in bio to take the free check.
+
+#selfemployed #financialfreedom #soletrader #freelancer #financialcheckup #selfemployeduk #nojudgement</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         POST 4: 3 things every self-employed person should have
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">Post 4</div>
+        <span class="post-purpose">Education / tips</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">5</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover -->
+            <div class="slide s-navy texture-3">
+              <div class="gradient-top-bar"></div>
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <h3 class="sl-title sz-xl" style="color:#fff;margin-bottom:10px;">3 things every self-employed person should have</h3>
+              <p class="sl-subtitle muted" style="color:rgba(249,244,238,0.5);">How many have you sorted?</p>
+              <div class="swipe-hint">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: #1 Income protection -->
+            <div class="slide s-navy texture-4" style="text-align:left;padding:36px 28px;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="margin:0 auto;max-width:480px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:100%;">
+                <div class="sl-single-number">1</div>
+                <h3 style="font-size:clamp(26px,4.5vw,36px);font-weight:700;color:#fff;margin-bottom:14px;line-height:1.2;">Income protection</h3>
+                <p class="sl-body-text on-navy" style="text-align:left;">If you can't work, who pays the bills?</p>
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(249,244,238,0.1);width:100%;">
+                  <p style="font-size:clamp(14px,2.2vw,18px);color:var(--coral-light);font-weight:500;">Unlike employees, there's no statutory sick pay for the self-employed.</p>
+                </div>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: #2 Pension -->
+            <div class="slide s-navy has-texture" style="text-align:left;padding:36px 28px;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="margin:0 auto;max-width:480px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:100%;">
+                <div class="sl-single-number">2</div>
+                <h3 style="font-size:clamp(26px,4.5vw,36px);font-weight:700;color:#fff;margin-bottom:14px;line-height:1.2;">A pension you actually pay into</h3>
+                <p class="sl-body-text on-navy" style="text-align:left;">No employer is topping yours up.</p>
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(249,244,238,0.1);width:100%;">
+                  <p style="font-size:clamp(14px,2.2vw,18px);color:var(--coral-light);font-weight:500;">If you're not contributing, nothing's growing.</p>
+                </div>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: #3 Life insurance -->
+            <div class="slide s-navy texture-2" style="text-align:left;padding:36px 28px;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="margin:0 auto;max-width:480px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;height:100%;">
+                <div class="sl-single-number">3</div>
+                <h3 style="font-size:clamp(26px,4.5vw,36px);font-weight:700;color:#fff;margin-bottom:14px;line-height:1.2;">Life insurance</h3>
+                <p class="sl-body-text on-navy" style="text-align:left;">Even without kids or a mortgage, it matters.</p>
+                <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(249,244,238,0.1);width:100%;">
+                  <p style="font-size:clamp(14px,2.2vw,18px);color:var(--coral-light);font-weight:500;">It protects anyone who depends on your income.</p>
+                </div>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 5: CTA -->
+            <div class="slide s-coral">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo">
+              <h3 class="sl-title sz-lg" style="margin-bottom:10px;">How many have<br>you got?</h3>
+              <p class="sl-body-text" style="color:var(--navy);opacity:0.7;margin-bottom:20px;text-align:center;">The free check covers all three&mdash;and more.</p>
+              <div class="sl-cta-pill">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark" style="color:rgba(15,35,64,0.2);">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">3 things every self-employed person should have sorted:
+
+1. Income protection — no employer sick pay means no safety net
+2. A pension you actually pay into — no one's topping it up for you
+3. Life insurance — even without kids, it matters
+
+How many have you got?
+
+Our free 5-minute check covers all three and more.
+
+Link in bio.
+
+#selfemployed #incomeprotection #pension #lifeinsurance #financialhealth #soletrader #freelanceruk #selfemployeduk</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         POST 5: No one checks this stuff for you
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">Post 5</div>
+        <span class="post-purpose">Awareness / empathy</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">5</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover — CORAL hook question -->
+            <div class="slide s-coral qmark-deco">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <h3 class="sl-title sz-xl" style="color:var(--navy);position:relative;z-index:1;">If you're self-employed, <span style="background-image:linear-gradient(transparent 60%,rgba(15,35,64,0.2) 60%);padding-bottom:2px;">who checks your finances?</span></h3>
+              <p class="sl-subtitle" style="color:var(--navy);opacity:0.7;margin-top:18px;position:relative;z-index:1;">Spoiler: probably no one.</p>
+              <div class="swipe-hint" style="color:var(--navy);opacity:0.6;">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark" style="color:rgba(15,35,64,0.2);">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: Employment contrast — CREAM -->
+            <div class="slide s-cream" style="padding:36px 32px;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="width:100%;max-width:480px;margin:0 auto;">
+                <div class="sl-badge badge-teal" style="margin-bottom:16px;">In employment</div>
+                <h3 style="font-size:clamp(22px,3.5vw,30px);font-weight:700;color:var(--navy);margin-bottom:18px;line-height:1.3;">Your employer handles:</h3>
+                <div class="sl-checklist">
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Auto-enrolled pension</div>
+                  </div>
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Statutory sick pay</div>
+                  </div>
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Life insurance through work</div>
+                  </div>
+                  <div class="sl-cl-item on-cream">
+                    <div class="sl-cl-check checked-teal">
+                      <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div class="sl-cl-text" style="color:var(--navy);">Annual benefits review</div>
+                  </div>
+                </div>
+              </div>
+              <span class="watermark wm-dark">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: Self-employed reality -->
+            <div class="slide s-navy texture-2" style="padding:36px 32px;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div style="width:100%;max-width:480px;margin:0 auto;">
+                <div class="sl-badge badge-coral" style="margin-bottom:16px;">Self-employed</div>
+                <h3 style="font-size:clamp(22px,3.5vw,30px);font-weight:700;color:var(--white);margin-bottom:18px;line-height:1.3;">It's all on you:</h3>
+                <div class="sl-checklist">
+                  <div class="sl-cl-item filled">
+                    <div class="sl-cl-check empty"></div>
+                    <div class="sl-cl-text" style="color:rgba(249,244,238,0.7);">Pension</div>
+                  </div>
+                  <div class="sl-cl-item filled">
+                    <div class="sl-cl-check empty"></div>
+                    <div class="sl-cl-text" style="color:rgba(249,244,238,0.7);">Income protection</div>
+                  </div>
+                  <div class="sl-cl-item filled">
+                    <div class="sl-cl-check empty"></div>
+                    <div class="sl-cl-text" style="color:rgba(249,244,238,0.7);">Life insurance</div>
+                  </div>
+                  <div class="sl-cl-item filled">
+                    <div class="sl-cl-check empty"></div>
+                    <div class="sl-cl-text" style="color:rgba(249,244,238,0.7);">Financial review</div>
+                  </div>
+                </div>
+                <p style="margin-top:16px;text-align:center;font-size:clamp(12px,2vw,16px);color:var(--coral-light);font-weight:500;">Most people don't know where to start.</p>
+              </div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: Solution -->
+            <div class="slide s-teal">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <h3 class="sl-title sz-lg" style="color:#fff;margin-bottom:16px;">That's where<br>we come in.</h3>
+              <div class="sl-divider" style="background:rgba(255,255,255,0.3);"></div>
+              <p class="sl-body-text on-teal" style="text-align:center;max-width:440px;">A free check that covers pension, protection, mortgage, savings and more.</p>
+              <p style="margin-top:16px;font-size:clamp(16px,2.5vw,22px);font-weight:600;color:#fff;">In 5 minutes.</p>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 5: CTA — NAVY (since cover was coral) -->
+            <div class="slide s-navy texture-3" style="align-items:center;text-align:center;">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo" style="filter:brightness(0) invert(1);opacity:0.9;">
+              <h3 class="sl-title sz-xl" style="color:#fff;margin-bottom:16px;">Check where<br>you stand</h3>
+              <div class="sl-features" style="color:rgba(249,244,238,0.7);">
+                <span class="sl-feature">Free</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">5 minutes</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">No documents</span>
+              </div>
+              <div class="sl-cta-pill pill-coral">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">If you're self-employed, no one checks this stuff for you.
+
+No auto-enrolled pension.
+No employer sick pay.
+No annual benefits review.
+
+Our free check looks at:
+→ Pension
+→ Protection
+→ Mortgage readiness
+→ Savings & investments
+→ Family & legacy
+
+All in one place. In 5 minutes.
+
+Link in bio to check where you stand.
+
+#selfemployed #pension #incomeprotection #soletrader #freelancer #financialcheckup #selfemployeduk #smallbusiness</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         POST 6: Worried you should already have this sorted?
+         ========================================== -->
+    <div class="post-card">
+      <div class="post-card-header">
+        <div class="post-number">Post 6</div>
+        <span class="post-purpose">Remove fear / emotional connection</span>
+      </div>
+
+      <div class="carousel-wrapper" data-carousel>
+        <div class="slide-counter"><span class="sc-current">1</span> / <span class="sc-total">4</span></div>
+        <button class="carousel-nav prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button class="carousel-nav next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+
+        <div class="carousel-viewport">
+          <div class="carousel-track">
+
+            <!-- Slide 1: Cover — CREAM with teal accent -->
+            <div class="slide s-cream" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <div class="sl-divider div-teal" style="margin-bottom:20px;"></div>
+              <h3 class="sl-title sz-xl" style="color:var(--navy);position:relative;z-index:1;">Worried you should already have <span style="color:var(--teal);">this sorted?</span></h3>
+              <div class="swipe-hint" style="color:var(--teal);">Swipe <span class="arr">&rarr;</span></div>
+              <span class="watermark wm-dark">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 2: Normalise — TEAL -->
+            <div class="slide s-teal" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <p class="sl-large-text" style="color:var(--white);">Most self-employed people feel the same.</p>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 3: Reframe — NAVY -->
+            <div class="slide s-navy texture-2" style="align-items:center;text-align:center;">
+              <div class="corner-logo"><img src="images/logo-icon.png" alt="SEH"></div>
+              <p style="font-size:clamp(24px,4vw,34px);font-weight:500;color:rgba(249,244,238,0.6);margin-bottom:16px;position:relative;z-index:1;">This isn't about catching up.</p>
+              <div class="sl-divider div-coral"></div>
+              <p style="font-size:clamp(28px,5vw,40px);font-weight:700;color:var(--coral);position:relative;z-index:1;">It's about knowing<br>where you stand.</p>
+              <span class="watermark wm-light">selfemployedhelp.co.uk</span>
+            </div>
+
+            <!-- Slide 4: CTA — CORAL -->
+            <div class="slide s-coral">
+              <img src="images/logo-horizontal.png" alt="SelfEmployedHelp.co.uk" class="sl-hlogo">
+              <h3 class="sl-title sz-xl" style="margin-bottom:16px;">Take the<br>free check</h3>
+              <div class="sl-features">
+                <span class="sl-feature">Free</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">Simple</span>
+                <span class="sl-fdot"></span>
+                <span class="sl-feature">5 minutes</span>
+              </div>
+              <div class="sl-cta-pill">go.selfemployedhelp.co.uk &rarr;</div>
+              <span class="watermark" style="color:rgba(15,35,64,0.2);">selfemployedhelp.co.uk</span>
+            </div>
+
+          </div>
+        </div>
+        <div class="carousel-dots"></div>
+      </div>
+
+      <div class="caption-area">
+        <div class="caption-label">Caption</div>
+        <div class="caption-text">Worried you should already have this sorted?
+
+Most self-employed people feel the same.
+
+This isn't about catching up.
+It's about knowing where you stand.
+
+Free. Simple. Five minutes.
+
+Link in bio.
+
+#selfemployed #finances #nojudgement #soletrader #freelanceruk #financialhealth #selfemployeduk #clarity</div>
+        <button class="copy-btn" onclick="copyCaption(this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copy Caption
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ======================================
+       FOOTER
+       ====================================== -->
+  <div class="page-footer">
+    <p>SelfEmployedHelp.co.uk Instagram Carousel Posts<br>Navigate through slides and copy captions for each post.</p>
+  </div>
+
+  <!-- ======================================
+       JAVASCRIPT
+       ====================================== -->
+  <script>
+    // Initialize all carousels
+    document.querySelectorAll('[data-carousel]').forEach(function(wrapper) {
+      var track = wrapper.querySelector('.carousel-track');
+      var slides = track.querySelectorAll('.slide');
+      var prevBtn = wrapper.querySelector('.carousel-nav.prev');
+      var nextBtn = wrapper.querySelector('.carousel-nav.next');
+      var dotsContainer = wrapper.querySelector('.carousel-dots');
+      var counterCurrent = wrapper.querySelector('.sc-current');
+      var counterTotal = wrapper.querySelector('.sc-total');
+      var currentIndex = 0;
+      var totalSlides = slides.length;
+
+      // Set total
+      counterTotal.textContent = totalSlides;
+
+      // Create dots
+      for (var i = 0; i < totalSlides; i++) {
+        var dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+        dot.dataset.index = i;
+        dot.addEventListener('click', function() {
+          goTo(parseInt(this.dataset.index));
+        });
+        dotsContainer.appendChild(dot);
+      }
+
+      var dots = dotsContainer.querySelectorAll('.carousel-dot');
+
+      function goTo(index) {
+        if (index < 0 || index >= totalSlides) return;
+        currentIndex = index;
+        track.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+        counterCurrent.textContent = currentIndex + 1;
+
+        // Update dots
+        dots.forEach(function(d, i) {
+          d.classList.toggle('active', i === currentIndex);
+        });
+
+        // Update button states
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === totalSlides - 1;
+      }
+
+      prevBtn.addEventListener('click', function() { goTo(currentIndex - 1); });
+      nextBtn.addEventListener('click', function() { goTo(currentIndex + 1); });
+
+      // Touch/swipe support
+      var startX = 0;
+      var isDragging = false;
+
+      wrapper.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        isDragging = true;
+      }, { passive: true });
+
+      wrapper.addEventListener('touchend', function(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        var diff = startX - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) goTo(currentIndex + 1);
+          else goTo(currentIndex - 1);
+        }
+      }, { passive: true });
+
+      // Keyboard nav when focused
+      wrapper.setAttribute('tabindex', '0');
+      wrapper.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') goTo(currentIndex - 1);
+        if (e.key === 'ArrowRight') goTo(currentIndex + 1);
+      });
+
+      // Initialize
+      goTo(0);
+    });
+
+    // Copy caption
+    function copyCaption(btn) {
+      var captionArea = btn.closest('.caption-area');
+      var text = captionArea.querySelector('.caption-text').textContent;
+      navigator.clipboard.writeText(text).then(function() {
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Caption';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
